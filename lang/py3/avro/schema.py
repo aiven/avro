@@ -256,16 +256,13 @@ class Name(object):
 
     if '.' in name:
       # name is absolute, namespace is ignored:
+
       self._fullname = name
+      self._name = name.split(".")[-1]
 
-      match = _RE_FULL_NAME.match(self._fullname)
-      if match is None:
-        raise SchemaParseException(
-            'Invalid absolute schema name: %r.' % self._fullname)
-
-      self._name = match.group(1)
-      self._namespace = self._fullname[:-(len(self._name) + 1)]
-
+      self._namespace = name[:-len(self._name)-1]
+      if _RE_FULL_NAME.match(self._name) is None:
+        raise SchemaParseException('Invalid schema name %r.' % self._name)
     else:
       # name is relative, combine with explicit namespace:
       self._name = name
@@ -275,10 +272,8 @@ class Name(object):
                         '%s.%s' % (self._namespace, self._name))
 
       # Validate the fullname:
-      if _RE_FULL_NAME.match(self._fullname) is None:
-        raise SchemaParseException(
-            'Invalid schema name %r infered from name %r and namespace %r.'
-            % (self._fullname, self._name, self._namespace))
+      if _RE_FULL_NAME.match(self._name) is None:
+        raise SchemaParseException('Invalid schema name %r.' % self._name)
 
   def __eq__(self, other):
     if not isinstance(other, Name):
