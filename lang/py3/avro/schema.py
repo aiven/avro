@@ -622,7 +622,10 @@ class PrimitiveSchema(Schema):
       return self.props
 
   def __eq__(self, that):
-    return self.props == that.props
+    try:
+        return str(self) == str(that) or json.loads(str(self)) == json.loads(str(that))
+    except json.JSONDecodeError:
+      return False
 
 
 # ------------------------------------------------------------------------------
@@ -667,7 +670,10 @@ class FixedSchema(NamedSchema):
       return names.prune_namespace(self.props)
 
   def __eq__(self, that):
-    return self.props == that.props
+    try:
+      return str(self) == str(that) or json.loads(str(self)) == json.loads(str(that))
+    except json.JSONDecodeError:
+      return False
 
 
 # ------------------------------------------------------------------------------
@@ -727,7 +733,10 @@ class EnumSchema(NamedSchema):
       return names.prune_namespace(self.props)
 
   def __eq__(self, that):
-    return self.props == that.props
+    try:
+      return str(self) == str(that) or json.loads(str(self)) == json.loads(str(that))
+    except json.JSONDecodeError:
+      return False
 
 
 # ------------------------------------------------------------------------------
